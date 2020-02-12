@@ -1,0 +1,36 @@
+body{
+  background-image: url(jitahub.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+h1, header{
+  text-align: center;
+  font-size: 52px;
+  padding: 10px 10px;
+  margin: 0px 0px;
+  font-weight: bold;
+  color: gray;
+}
+h1.name{
+  height: 220px;
+  color: white;
+  font-size: 245px;
+  font-family: "electricalneue", "stencil regular";
+}
+p{
+  color: white;
+  font-size: 20px;
+  margin-left: 200;
+  margin-right: 350;
+}
+.menu{
+  font-size: 22px;
+  width: 200px; /* Set the width of the sidebar */
+  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+  z-index: 1; /* Stay on top */
+  top: 320px; /* Stay at the top */
+  left: 0;
+  background-color: inherit; /* Black */
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 20px;
+}
