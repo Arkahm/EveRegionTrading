@@ -72,6 +72,6 @@ lowest_highest = lowestJita + lowestRens + lowestDodi + lowestAmarr + lowestHek
 df2 = pd.DataFrame(lowest_highest)
 df2 = df2.set_index(['type_id'])
 df2 = df2.sort_index()
-df2.to_csv(r'market_working_files\combined.csv')
+df2.to_csv(r'./market_working_files\combined.csv')
 
 print(datetime.today())
