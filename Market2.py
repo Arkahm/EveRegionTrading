@@ -74,7 +74,7 @@ df2 = pd.DataFrame(lowest_highest)
 df2 = df2.sort_values(by=['type_id'])
 df2.to_csv(r'market_working_files/combined.csv')
 
-print(df2)
+print(df2)  # for testing purposes only. It is not needed.
 
 # groups type id's into each type and gets min/max price
 typeid_grp = df2.groupby(['type_id'])
