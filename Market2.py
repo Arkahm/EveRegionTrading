@@ -78,7 +78,10 @@ print(df2)  # for testing purposes only. It is not needed.
 
 # groups type id's into each type and gets min/max price
 typeid_grp = df2.groupby(['type_id'])
-print(typeid_grp['price'].agg(['min', 'max']))
+type_group_marg = typeid_grp['price'].agg(['min', 'max'])
+type_group_marg['Margin'] = ((type_group_marg['max']-type_group_marg['min'])/type_group_marg['max'])*100
+print(type_group_marg)
+
 print(datetime.today() - start)
 
 print(datetime.today())
