@@ -69,15 +69,15 @@ def getLowest(system, location):
     df1 = df1.sort_index()
 
 # selection of file name for selected items by location
-    if location == Amarr_location_id:
-        df1.to_csv(r'market_working_files/lowest_items_Amarr.csv')
-    elif location == Hek_location_id:
-        df1.to_csv(r'market_working_files/lowest_items_Hek.csv')
-    elif location == Jita_location_id:
-        df1.to_csv(r'market_working_files/lowest_items_Jita.csv')
-    elif location == Rens_location_id:
-        df1.to_csv(r'market_working_files/lowest_items_Rens.csv')
-    elif location == Dodixie_location_id:
-        df1.to_csv(r'market_working_files/lowest_items_Dodixie.csv')
+#    if location == Amarr_location_id:
+#        df1.to_csv(r'market_working_files/lowest_items_Amarr.csv')
+#    elif location == Hek_location_id:
+#        df1.to_csv(r'market_working_files/lowest_items_Hek.csv')
+#    elif location == Jita_location_id:
+#        df1.to_csv(r'market_working_files/lowest_items_Jita.csv')
+#    elif location == Rens_location_id:
+#        df1.to_csv(r'market_working_files/lowest_items_Rens.csv')
+#    elif location == Dodixie_location_id:
+#        df1.to_csv(r'market_working_files/lowest_items_Dodixie.csv')
 
     return singleItemsLow
