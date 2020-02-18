@@ -2,6 +2,7 @@ import requests
 import pandas as pd
 from datetime import datetime
 from marketFunctions import get_orders, getLowest
+# import market_file_import
 
 #   reference
 Domain = 10000043
@@ -26,7 +27,7 @@ print(start)
 url_station = 'https://esi.evetech.net/latest/markets/' + \
     str(Forge) + '/orders/?datasource=tranquility&order_type=sell'
 region_List = requests.get(url_station)
-no_pages = 20  # region_List.headers['x-pages']
+no_pages = region_List.headers['x-pages']
 jitaOrders = get_orders(Forge, Jita_location_id, int(no_pages))
 lowestJita = getLowest(jitaOrders, Jita_location_id)
 print(datetime.today() - start)
@@ -34,7 +35,7 @@ print(datetime.today() - start)
 url_station = 'https://esi.evetech.net/latest/markets/' + str(Domain) + \
     '/orders/?datasource=tranquility&order_type=sell'
 region_List = requests.get(url_station)
-no_pages = 20  # region_List.headers['x-pages']
+no_pages = region_List.headers['x-pages']
 amarrOrders = get_orders(Domain, Amarr_location_id, int(no_pages))
 lowestAmarr = getLowest(amarrOrders, Amarr_location_id)
 print(datetime.today() - start)
@@ -42,7 +43,7 @@ print(datetime.today() - start)
 url_station = 'https://esi.evetech.net/latest/markets/' + \
     str(SinqLaison) + '/orders/?datasource=tranquility&order_type=sell'
 region_List = requests.get(url_station)
-no_pages = 20  # region_List.headers['x-pages']
+no_pages = region_List.headers['x-pages']
 dodiOrders = get_orders(SinqLaison, Dodixie_location_id, int(no_pages))
 lowestDodi = getLowest(dodiOrders, Dodixie_location_id)
 print(datetime.today() - start)
@@ -50,7 +51,7 @@ print(datetime.today() - start)
 url_station = 'https://esi.evetech.net/latest/markets/' + str(Metropolis) + \
     '/orders/?datasource=tranquility&order_type=sell'
 region_List = requests.get(url_station)
-no_pages = 20  # region_List.headers['x-pages']
+no_pages = region_List.headers['x-pages']
 hekOrders = get_orders(Metropolis, Hek_location_id, int(no_pages))
 lowestHek = getLowest(hekOrders, Hek_location_id)
 print(datetime.today() - start)
@@ -58,7 +59,7 @@ print(datetime.today() - start)
 url_station = 'https://esi.evetech.net/latest/markets/' + str(Heimatar) + \
     '/orders/?datasource=tranquility&order_type=sell'
 region_List = requests.get(url_station)
-no_pages = 20  # region_List.headers['x-pages']
+no_pages = region_List.headers['x-pages']
 rensOrders = get_orders(Heimatar, Rens_location_id, int(no_pages))
 lowestRens = getLowest(rensOrders, Rens_location_id)
 print(datetime.today() - start)
@@ -96,6 +97,9 @@ type_group_marg['Margin'] = ((type_group_marg['Sell Price'] -
 type_group_marg = type_group_marg[type_group_marg['Margin'] >= 40]
 
 print(type_group_marg.head(20))
+type_group_marg.to_csv(r'market_working_files/hi_low_price.csv')
+
+# market_file_import()
 
 print(datetime.today() - start)
 
