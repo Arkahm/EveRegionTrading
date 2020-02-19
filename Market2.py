@@ -101,7 +101,7 @@ type_group_marg.to_csv(r'market_working_files/hi_low_price.csv')
 
 type_group_marg.to_html(r'market_working_files/group_table.html',
                         float_format='%.2f',
-                        justify='center')
+                        justify='justify-all')
 
 # market_file_import()
 

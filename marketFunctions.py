@@ -37,7 +37,7 @@ def get_orders(region, location, pages):
             for item in station_json:
                 if item['location_id'] == location and item['issued'] >= str(timeDiff):
                     station_list.insert(len(station_list), item)
-            print(page, end='\r')
+            print(' page = ', page, end='\r')
             page += 1
         except Exception:
             continue
