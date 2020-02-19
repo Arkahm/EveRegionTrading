@@ -68,7 +68,7 @@ print(datetime.today() - start)
 lowest_highest = lowestJita + lowestRens + lowestDodi + lowestAmarr + lowestHek
 
 df2 = pd.DataFrame(lowest_highest)
-df2 = df2.sort_values(by=['type_id'])
+# df2 = df2.sort_values(by=['type_id'])
 # df2.to_csv(r'market_working_files/combined.csv')
 
 replace_location = {
@@ -88,7 +88,7 @@ df2.replace(replace_location, inplace=True)
 typeid_grp = df2.groupby(['type_id'])
 print(typeid_grp.head(20))
 type_group_marg = typeid_grp['price'].agg(['min', 'max'])
-print(type_group_marg.head(20))
+print(type_group_marg)
 type_group_marg.rename(columns={'min': 'Buy Price', 'max': 'Sell Price'}, inplace=True)
 type_group_marg['Margin'] = ((type_group_marg['Sell Price'] -
                              type_group_marg['Buy Price'])/type_group_marg['Sell Price'])*100
@@ -98,6 +98,10 @@ type_group_marg = type_group_marg[type_group_marg['Margin'] >= 40]
 
 print(type_group_marg.head(20))
 type_group_marg.to_csv(r'market_working_files/hi_low_price.csv')
+
+type_group_marg.to_html(r'market_working_files/group_table.html',
+                        float_format='%.2f',
+                        justify='center')
 
 # market_file_import()
 
