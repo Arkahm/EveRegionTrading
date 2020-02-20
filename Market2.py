@@ -33,7 +33,7 @@ for region in regions:
     region_List = requests.get(url_station)
     no_pages = region_List.headers['x-pages']
     orders = getOrders(region, locations[locations_count], int(no_pages))  # need to advance locations
-    lowest = getLowest(orders, locations[locations_count])
+    lowest = getLowest(orders)
     locations_count += 1
     print(datetime.today() - start)
     
