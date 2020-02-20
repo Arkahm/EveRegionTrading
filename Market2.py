@@ -34,7 +34,7 @@ for region in regions:
     no_pages = region_List.headers['x-pages']
     orders = getOrders(region, locations[locations_count], int(no_pages))  # need to advance locations
     locations_count += 1
-    lowest = getLowest(orders, locations)
+    lowest = getLowest(orders, locations[locations_count])
     print(datetime.today() - start)
     
 # combines individual station list into one large market list
