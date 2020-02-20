@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 from datetime import datetime
-from marketFunctions import get_orders, getLowest
+from marketFunctions import getOrders, getLowest
 # import market_file_import
 
 #   reference
@@ -23,52 +23,25 @@ print(start)
 
 # these functions will set the number of ESI pages to loop through in order to
 # pull ALL items and will assign where to search
+regions = [Forge, Domain, SinqLaison, Metropolis, Heimatar]
+locations = [Jita_location_id, Amarr_location_id, Dodixie_location_id, Hek_location_id, Rens_location_id]
+locations_count = 0
+lowest_highest = []
 
-url_station = 'https://esi.evetech.net/latest/markets/' + \
-    str(Forge) + '/orders/?datasource=tranquility&order_type=sell'
-region_List = requests.get(url_station)
-no_pages = region_List.headers['x-pages']
-jitaOrders = get_orders(Forge, Jita_location_id, int(no_pages))
-lowestJita = getLowest(jitaOrders, Jita_location_id)
-print(datetime.today() - start)
-
-url_station = 'https://esi.evetech.net/latest/markets/' + str(Domain) + \
-    '/orders/?datasource=tranquility&order_type=sell'
-region_List = requests.get(url_station)
-no_pages = region_List.headers['x-pages']
-amarrOrders = get_orders(Domain, Amarr_location_id, int(no_pages))
-lowestAmarr = getLowest(amarrOrders, Amarr_location_id)
-print(datetime.today() - start)
-
-url_station = 'https://esi.evetech.net/latest/markets/' + \
-    str(SinqLaison) + '/orders/?datasource=tranquility&order_type=sell'
-region_List = requests.get(url_station)
-no_pages = region_List.headers['x-pages']
-dodiOrders = get_orders(SinqLaison, Dodixie_location_id, int(no_pages))
-lowestDodi = getLowest(dodiOrders, Dodixie_location_id)
-print(datetime.today() - start)
-
-url_station = 'https://esi.evetech.net/latest/markets/' + str(Metropolis) + \
-    '/orders/?datasource=tranquility&order_type=sell'
-region_List = requests.get(url_station)
-no_pages = region_List.headers['x-pages']
-hekOrders = get_orders(Metropolis, Hek_location_id, int(no_pages))
-lowestHek = getLowest(hekOrders, Hek_location_id)
-print(datetime.today() - start)
-
-url_station = 'https://esi.evetech.net/latest/markets/' + str(Heimatar) + \
-    '/orders/?datasource=tranquility&order_type=sell'
-region_List = requests.get(url_station)
-no_pages = region_List.headers['x-pages']
-rensOrders = get_orders(Heimatar, Rens_location_id, int(no_pages))
-lowestRens = getLowest(rensOrders, Rens_location_id)
-print(datetime.today() - start)
+for region in regions:
+    url_station = 'https://esi.evetech.net/latest/markets/' + \
+        str(region) + '/orders/?datasource=tranquility&order_type=sell'
+    region_List = requests.get(url_station)
+    no_pages = 20  # region_List.headers['x-pages']
+    orders = getOrders(region, locations[locations_count], int(no_pages))  # need to advance locations
+    lowest = getLowest(orders)
+    locations_count += 1
+    print(datetime.today() - start)
 
 # combines individual station list into one large market list
-lowest_highest = lowestJita + lowestRens + lowestDodi + lowestAmarr + lowestHek
+    lowest_highest.extend(lowest)
 
 df2 = pd.DataFrame(lowest_highest)
-# df2 = df2.sort_values(by=['type_id'])
 # df2.to_csv(r'market_working_files/combined.csv')
 
 replace_location = {
@@ -82,7 +55,7 @@ replace_location = {
 df2.replace(replace_location, inplace=True)
 
 # for testing purposes only. It is not needed.
-# print(df2.head(20))
+print(df2.head(20))
 
 # groups type id's into each type and gets min/max price
 typeid_grp = df2.groupby(['type_id'])
