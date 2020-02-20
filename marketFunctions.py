@@ -50,35 +50,16 @@ def getOrders(region, location, pages):
 
 
 # sorts items and gets each of the lowest priced items from the station
-def getLowest(system, location):
+def getLowest(systems, location):
     i = 0
     singleItemsLow = []
-    for this in system:
-        if i < len(system)-1:
-            systemOrder = system[i+1]
-        if this['type_id'] != systemOrder['type_id']:
-            singleItemsLow.append(this)
+    for system in systems:
+        if i < len(systems)-1:
+            system_order = systems[i+1]
+        if system['type_id'] != system_order['type_id']:
+            singleItemsLow.append(system)
         # print(i, end='\r')
         i += 1
-
-# using PANDAS for ease of file transfer to disks
-# This is not needed if you are good with archaic PYTHON methods.
-
-    df1 = pd.DataFrame(singleItemsLow)
-    df1 = df1.set_index(['type_id'])
-    df1 = df1.sort_index()
-
-# selection of file name for selected items by location
-#    if location == Amarr_location_id:
-#        df1.to_csv(r'market_working_files/lowest_items_Amarr.csv')
-#    elif location == Hek_location_id:
-#        df1.to_csv(r'market_working_files/lowest_items_Hek.csv')
-#    elif location == Jita_location_id:
-#        df1.to_csv(r'market_working_files/lowest_items_Jita.csv')
-#    elif location == Rens_location_id:
-#        df1.to_csv(r'market_working_files/lowest_items_Rens.csv')
-#    elif location == Dodixie_location_id:
-#        df1.to_csv(r'market_working_files/lowest_items_Dodixie.csv')
 
     return singleItemsLow
 
