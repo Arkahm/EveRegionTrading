@@ -50,7 +50,7 @@ def getOrders(region, location, pages):
 
 
 # sorts items and gets each of the lowest priced items from the station
-def getLowest(systems, location):
+def getLowest(systems):
     i = 0
     singleItemsLow = []
     for system in systems:
