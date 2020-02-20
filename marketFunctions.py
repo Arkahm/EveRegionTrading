@@ -1,6 +1,5 @@
 import requests
 import operator
-import pandas as pd
 from datetime import timedelta, date
 
 #   reference
@@ -64,7 +63,7 @@ def getLowest(systems):
     return singleItemsLow
 
 
-def product_total_sold(number):
+def productTotalSold(number):
     time_diff = date.today() - timedelta(days=14)
     url = 'https://esi.evetech.net/latest/markets/' + Domain \
         + '/history/?datasource=tranquility&type_id=' + str(number)
@@ -85,7 +84,7 @@ def product_total_sold(number):
     return weekly_sales
 
 
-def product_total_added(number):
+def productTotalAdded(number):
     time_diff = date.today() - timedelta(days=14)
     url2 = 'https://esi.evetech.net/latest/markets/' + Domain + \
         '/orders/?datasource=tranquility&order_type=sell&page=1&type_id=' + str(number)
@@ -97,7 +96,7 @@ def product_total_added(number):
     # Find total items added to market in 7 days.
     for items_total in all_products:
         # print(items_total.keys())
-        if items_total['issued'] > str(tim_diff):
+        if items_total['issued'] > str(time_diff):
             volumes.append(items_total['volume_total'])
             # print('Items added per day:', items_total['volume_total'])
 

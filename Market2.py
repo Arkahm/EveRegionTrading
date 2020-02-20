@@ -4,7 +4,7 @@ from datetime import datetime
 from marketFunctions import getOrders, getLowest
 # import market_file_import
 
-#   reference
+#  reference
 Domain = 10000043
 Amarr_location_id = 60008494
 Metropolis = 10000042
@@ -21,8 +21,7 @@ pd.set_option('display.max_rows', 50)
 start = datetime.today()
 print(start)
 
-# these functions will set the number of ESI pages to loop through in order to
-# pull ALL items and will assign where to search
+# preliminary location, counter, and list requirements
 regions = [Forge, Domain, SinqLaison, Metropolis, Heimatar]
 locations = [Jita_location_id,
              Amarr_location_id,
@@ -32,12 +31,14 @@ locations = [Jita_location_id,
 locations_count = 0
 lowest_highest = []
 
+# sets the number of ESI pages to loop through in order to
+# pull ALL items and will assign where to search
 for region in regions:
     url_station = 'https://esi.evetech.net/latest/markets/' + \
         str(region) + '/orders/?datasource=tranquility&order_type=sell'
-    region_List = requests.get(url_station)
-    no_pages = region_List.headers['x-pages']
-    orders = getOrders(region, locations[locations_count], int(no_pages))
+    region_list = requests.get(url_station)
+    num_pages = region_list.headers['x-pages']
+    orders = getOrders(region, locations[locations_count], int(num_pages))
     lowest = getLowest(orders)
     locations_count += 1
     print(datetime.today() - start)
@@ -46,7 +47,6 @@ for region in regions:
     lowest_highest.extend(lowest)
 
 df2 = pd.DataFrame(lowest_highest)
-# df2.to_csv(r'market_working_files/combined.csv')
 
 replace_location = {
     60008494: 'Amarr',
@@ -57,15 +57,16 @@ replace_location = {
 }
 
 df2.replace(replace_location, inplace=True)
-
-# for testing purposes only. It is not needed.
-# print(df2.head(20))
+df2.reset_index(drop=True, inplace=True)
+df2.sort_values(by=['type_id'], ignore_index=True, inplace=True)
 
 # groups type id's into each type and gets min/max price
 typeid_grp = df2.groupby(['type_id'])
-print(typeid_grp.head(20))
+# print(list(typeid_grp))
 type_group_marg = typeid_grp['price'].agg(['min', 'max'])
-print(type_group_marg)
+type_group_marg.reset_index(inplace=True)
+print(type_group_marg.head(20))
+
 type_group_marg.rename(columns={'min': 'Buy Price', 'max': 'Sell Price'}, inplace=True)
 type_group_marg['Margin'] = ((type_group_marg['Sell Price'] -
                              type_group_marg['Buy Price'])/type_group_marg['Sell Price'])*100
@@ -73,14 +74,12 @@ type_group_marg['Margin'] = ((type_group_marg['Sell Price'] -
 # filters DF to only above 40% margin
 type_group_marg = type_group_marg[type_group_marg['Margin'] >= 40]
 
-print(type_group_marg.head(20))
+print(str(len(type_group_marg)) + ' items\n', type_group_marg.head(20))
 type_group_marg.to_csv(r'market_working_files/hi_low_price.csv')
 
 type_group_marg.to_html(r'market_working_files/group_table.html',
                         float_format='%.2f',
                         justify='justify-all')
-
-# market_file_import()
 
 print(datetime.today() - start)
 
