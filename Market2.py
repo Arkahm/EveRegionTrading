@@ -24,7 +24,11 @@ print(start)
 # these functions will set the number of ESI pages to loop through in order to
 # pull ALL items and will assign where to search
 regions = [Forge, Domain, SinqLaison, Metropolis, Heimatar]
-locations = [Jita_location_id, Amarr_location_id, Dodixie_location_id, Hek_location_id, Rens_location_id]
+locations = [Jita_location_id,
+             Amarr_location_id,
+             Dodixie_location_id,
+             Hek_location_id,
+             Rens_location_id]
 locations_count = 0
 lowest_highest = []
 
@@ -32,8 +36,8 @@ for region in regions:
     url_station = 'https://esi.evetech.net/latest/markets/' + \
         str(region) + '/orders/?datasource=tranquility&order_type=sell'
     region_List = requests.get(url_station)
-    no_pages = 20  # region_List.headers['x-pages']
-    orders = getOrders(region, locations[locations_count], int(no_pages))  # need to advance locations
+    no_pages = region_List.headers['x-pages']
+    orders = getOrders(region, locations[locations_count], int(no_pages))
     lowest = getLowest(orders)
     locations_count += 1
     print(datetime.today() - start)
@@ -55,7 +59,7 @@ replace_location = {
 df2.replace(replace_location, inplace=True)
 
 # for testing purposes only. It is not needed.
-print(df2.head(20))
+# print(df2.head(20))
 
 # groups type id's into each type and gets min/max price
 typeid_grp = df2.groupby(['type_id'])
