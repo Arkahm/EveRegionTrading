@@ -7,4 +7,4 @@ db.sqlite3
 /static
 .DS_Store
 *.csv
-*.HTML
+*.html
