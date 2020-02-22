@@ -22,12 +22,16 @@ start = datetime.today()
 print(start)
 
 # preliminary location, counter, and list requirements
-regions = [Forge, Domain, SinqLaison, Metropolis, Heimatar]
-locations = [Jita_location_id,
+regions = [# Forge,
+           Domain,
+           SinqLaison,
+           # Metropolis, 
+           # Heimatar]
+locations = [# Jita_location_id,
              Amarr_location_id,
              Dodixie_location_id,
-             Hek_location_id,
-             Rens_location_id]
+             # Hek_location_id,
+             # Rens_location_id]
 locations_count = 0
 lowest_highest = []
 
@@ -61,7 +65,7 @@ df2.reset_index(drop=True, inplace=True)
 df2.sort_values(by=['type_id'], ignore_index=True, inplace=True)
 
 # groups type id's into each type and gets min/max price
-typeid_grp = df2.groupby(['type_id'])
+typeid_grp = df2.groupby('type_id')
 # print(list(typeid_grp))
 type_group_marg = typeid_grp['price'].agg(['min', 'max'])
 type_group_marg.reset_index(inplace=True)
