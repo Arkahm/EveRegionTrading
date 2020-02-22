@@ -1,7 +1,7 @@
 import requests
 import operator
 import pandas as pd
-from datetime import timedelta, date
+from datetime import timedelta, date, datetime
 
 #   reference
 Domain = 10000043
@@ -63,10 +63,8 @@ def getLowest(systems):
 
     return singleItemsLow
 
+
 def svrCalc(data):
-    # sets number of past days to include for number of sold items
-    time_diff = date.today() - timedelta(days=14)
-    
     # create DF for holding final items
     df1 = pd.DataFrame()
     for type_id in data['type_id']:
@@ -85,7 +83,7 @@ def svrCalc(data):
             df2 = pd.DataFrame[int(type_id), data['type_id'], int(SVR)]
             df1.append(df2, ignore_index=True, inplace=True)
             print(str(int(type_id)) + ': ' + data['type_id'] +
-                      ' Sales to Volume Ratio (%) =', int(SVR))
+                  ' Sales to Volume Ratio (%) =', int(SVR))
             print('Margin = %.2f' % margin, '%')
             print('Total Sold:', sold_items, 'Total Posted:', added_items)
     print(df1)
@@ -94,6 +92,7 @@ def svrCalc(data):
     print(datetime.today())
     print('')
     print('End Items')
+
 
 def productTotalSold(number):
     time_diff = date.today() - timedelta(days=14)
