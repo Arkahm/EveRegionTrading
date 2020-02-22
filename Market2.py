@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 from datetime import datetime
-from marketFunctions import getOrders, getLowest
+from marketFunctions import getOrders, getLowest, svrCalc
 # import market_file_import
 
 #  reference
@@ -80,6 +80,8 @@ type_group_marg.to_csv(r'market_working_files/hi_low_price.csv')
 type_group_marg.to_html(r'market_working_files/group_table.html',
                         float_format='%.2f',
                         justify='justify-all')
+
+svr_calc(type_group_marg)
 
 print(datetime.today() - start)
 
