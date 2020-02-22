@@ -2,7 +2,6 @@ import requests
 import pandas as pd
 from datetime import datetime
 from marketFunctions import getOrders, getLowest  # , svrCalc
-# import market_file_import
 
 #  reference
 Domain = 10000043
