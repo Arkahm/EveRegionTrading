@@ -1,8 +1,7 @@
 import requests
 import pandas as pd
 from datetime import datetime
-from time import sleep
-from marketFunctions import getOrders, getLowest, svrCalc
+from marketFunctions import getOrders, getLowest  # , svrCalc
 # import market_file_import
 
 #  reference
@@ -67,7 +66,7 @@ df2.reset_index(drop=True, inplace=True)
 
 # groups type id's into each type and gets min/max price
 typeid_grp = df2.groupby('type_id')
-#print(list(typeid_grp))
+# print(list(typeid_grp))
 
 # print(list(typeid_grp))
 
