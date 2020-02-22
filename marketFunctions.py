@@ -63,7 +63,7 @@ def getLowest(systems):
 
     return singleItemsLow
 
-def svr_calc(data):
+def svrCalc(data):
     # sets number of past days to include for number of sold items
     time_diff = date.today() - timedelta(days=14)
     
