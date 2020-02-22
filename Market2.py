@@ -2,6 +2,7 @@ import requests
 import pandas as pd
 from datetime import datetime
 from marketFunctions import getOrders, getLowest
+# from time import sleep
 # import market_file_import
 
 #  reference
@@ -37,7 +38,7 @@ for region in regions:
     url_station = 'https://esi.evetech.net/latest/markets/' + \
         str(region) + '/orders/?datasource=tranquility&order_type=sell'
     region_list = requests.get(url_station)
-    num_pages = region_list.headers['x-pages']
+    num_pages = 2  # region_list.headers['x-pages']
     orders = getOrders(region, locations[locations_count], int(num_pages))
     lowest = getLowest(orders)
     locations_count += 1
@@ -58,11 +59,11 @@ replace_location = {
 
 df2.replace(replace_location, inplace=True)
 df2.reset_index(drop=True, inplace=True)
-df2.sort_values(by=['type_id'], ignore_index=True, inplace=True)
+# df2.sort_values(by=['type_id'], ignore_index=True, inplace=True)
 
 # groups type id's into each type and gets min/max price
-typeid_grp = df2.groupby(['type_id'])
-# print(list(typeid_grp))
+typeid_grp = df2.groupby('type_id', axis=0)
+print(list(typeid_grp))
 type_group_marg = typeid_grp['price'].agg(['min', 'max'])
 type_group_marg.reset_index(inplace=True)
 print(type_group_marg.head(20))
