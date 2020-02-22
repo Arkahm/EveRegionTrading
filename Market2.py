@@ -40,7 +40,7 @@ for region in regions:
     url_station = 'https://esi.evetech.net/latest/markets/' + \
         str(region) + '/orders/?datasource=tranquility&order_type=sell'
     region_list = requests.get(url_station)
-    num_pages = 50  # region_list.headers['x-pages']
+    num_pages = region_list.headers['x-pages']
     orders = getOrders(region, locations[locations_count], int(num_pages))
     lowest = getLowest(orders)
     locations_count += 1
@@ -61,17 +61,16 @@ replace_location = {
 
 df2.replace(replace_location, inplace=True)
 df2.reset_index(drop=True, inplace=True)
+df2.sort_values(by=['type_id'], inplace=True)
+print(df2.head(20))
 
 # groups type id's into each type and gets min/max price
 typeid_grp = df2.groupby('type_id')
-# print(list(typeid_grp))
 
-type_group_marg = typeid_grp['price'].agg(['min', 'max'])
-print(type_group_marg.head(20))
-
+type_group_marg = typeid_grp[['location_id', 'price']].agg(['min', 'max'])
 type_group_marg.rename(columns={'min': 'Buy Price', 'max': 'Sell Price'}, inplace=True)
-type_group_marg['Margin'] = ((type_group_marg['Sell Price'] -
-                             type_group_marg['Buy Price'])/type_group_marg['Sell Price'])*100
+type_group_marg['Margin'] = ((type_group_marg['price']['Sell Price'] - type_group_marg['price']
+                             ['Buy Price'])/type_group_marg['price']['Sell Price'])*100
 
 # filters DF to only above 40% margin
 type_group_marg = type_group_marg[type_group_marg['Margin'] >= 40]
