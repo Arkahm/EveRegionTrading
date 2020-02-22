@@ -84,8 +84,8 @@ type_group_marg.to_html(r'market_working_files/group_table.html',
                         float_format='%.2f',
                         justify='justify-all')
 
-final_list = svrCalc(type_group_marg)
-print(final_list)
+final_df = svrCalc(type_group_marg)
+print(final_df)
            
 print(datetime.today() - start)
 
