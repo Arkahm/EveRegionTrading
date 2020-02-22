@@ -62,12 +62,9 @@ replace_location = {
 
 df2.replace(replace_location, inplace=True)
 df2.reset_index(drop=True, inplace=True)
-# df2.sort_values(by=['type_id'], ignore_index=True, inplace=True)
 
 # groups type id's into each type and gets min/max price
 typeid_grp = df2.groupby('type_id')
-# print(list(typeid_grp))
-
 # print(list(typeid_grp))
 
 type_group_marg = typeid_grp['price'].agg(['min', 'max'])
