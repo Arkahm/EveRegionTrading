@@ -68,7 +68,6 @@ df2.sort_values(by=['type_id'], ignore_index=True, inplace=True)
 typeid_grp = df2.groupby('type_id')
 # print(list(typeid_grp))
 type_group_marg = typeid_grp['price'].agg(['min', 'max'])
-type_group_marg.reset_index(inplace=True)
 print(type_group_marg.head(20))
 
 type_group_marg.rename(columns={'min': 'Buy Price', 'max': 'Sell Price'}, inplace=True)
