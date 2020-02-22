@@ -40,7 +40,7 @@ for region in regions:
     url_station = 'https://esi.evetech.net/latest/markets/' + \
         str(region) + '/orders/?datasource=tranquility&order_type=sell'
     region_list = requests.get(url_station)
-    num_pages = 2  # region_list.headers['x-pages']
+    num_pages = 50  # region_list.headers['x-pages']
     orders = getOrders(region, locations[locations_count], int(num_pages))
     lowest = getLowest(orders)
     locations_count += 1
