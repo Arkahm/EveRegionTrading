@@ -1,6 +1,7 @@
 import requests
 import operator
-from datetime import timedelta, date
+import pandas as pd
+from datetime import timedelta, date, datetime
 
 #   reference
 Domain = 10000043
@@ -61,6 +62,36 @@ def getLowest(systems):
         i += 1
 
     return singleItemsLow
+
+
+def svrCalc(data):
+    # create DF for holding final items
+    df1 = pd.DataFrame()
+    for type_id in data['type_id']:
+        # try excludes any sold_items/0 issues
+        try:
+            sold_items = productTotalSold(int(type_id))
+            added_items = productTotalAdded(int(type_id))
+            SVR = (sold_items/added_items)*100
+        except Exception:
+            continue
+
+        # Output SVR value
+        margin = ((float(data['Sell Price']) -
+                  float(data['Buy Price']))/float(data['Buy Price']))*100
+        if SVR >= 100 and added_items >= 14:
+            df2 = pd.DataFrame[int(type_id), data['type_id'], int(SVR)]
+            df1.append(df2, ignore_index=True, inplace=True)
+            print(str(int(type_id)) + ': ' + data['type_id'] +
+                  ' Sales to Volume Ratio (%) =', int(SVR))
+            print('Margin = %.2f' % margin, '%')
+            print('Total Sold:', sold_items, 'Total Posted:', added_items)
+    print(df1)
+    return df1
+
+    print(datetime.today())
+    print('')
+    print('End Items')
 
 
 def productTotalSold(number):

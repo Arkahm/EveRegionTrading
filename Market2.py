@@ -1,8 +1,7 @@
 import requests
 import pandas as pd
 from datetime import datetime
-from marketFunctions import getOrders, getLowest
-# from time import sleep
+from marketFunctions import getOrders, getLowest  # , svrCalc
 # import market_file_import
 
 #  reference
@@ -23,7 +22,11 @@ start = datetime.today()
 print(start)
 
 # preliminary location, counter, and list requirements
-regions = [Forge, Domain, SinqLaison, Metropolis, Heimatar]
+regions = [Forge,
+           Domain,
+           SinqLaison,
+           Metropolis,
+           Heimatar]
 locations = [Jita_location_id,
              Amarr_location_id,
              Dodixie_location_id,
@@ -62,10 +65,12 @@ df2.reset_index(drop=True, inplace=True)
 # df2.sort_values(by=['type_id'], ignore_index=True, inplace=True)
 
 # groups type id's into each type and gets min/max price
-typeid_grp = df2.groupby('type_id', axis=0)
-print(list(typeid_grp))
+typeid_grp = df2.groupby('type_id')
+# print(list(typeid_grp))
+
+# print(list(typeid_grp))
+
 type_group_marg = typeid_grp['price'].agg(['min', 'max'])
-type_group_marg.reset_index(inplace=True)
 print(type_group_marg.head(20))
 
 type_group_marg.rename(columns={'min': 'Buy Price', 'max': 'Sell Price'}, inplace=True)
@@ -81,7 +86,10 @@ type_group_marg.to_csv(r'market_working_files/hi_low_price.csv')
 type_group_marg.to_html(r'market_working_files/group_table.html',
                         float_format='%.2f',
                         justify='justify-all')
-
+'''
+final_df = svrCalc(type_group_marg)
+print(final_df)
+'''
 print(datetime.today() - start)
 
 print(datetime.today())
