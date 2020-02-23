@@ -1,7 +1,8 @@
 import requests
 import pandas as pd
 from datetime import datetime
-from marketFunctions import getOrders, getLowest  # , svrCalc
+from operator import itemgetter
+from marketFunctions import getOrders, getLowest, idConverter, svrCalc
 
 #  reference
 Domain = 10000043
@@ -40,7 +41,7 @@ for region in regions:
     url_station = 'https://esi.evetech.net/latest/markets/' + \
         str(region) + '/orders/?datasource=tranquility&order_type=sell'
     region_list = requests.get(url_station)
-    num_pages = region_list.headers['x-pages']
+    num_pages = 2  # region_list.headers['x-pages']
     orders = getOrders(region, locations[locations_count], int(num_pages))
     lowest = getLowest(orders)
     locations_count += 1
@@ -62,7 +63,7 @@ replace_location = {
 df2.replace(replace_location, inplace=True)
 df2.reset_index(drop=True, inplace=True)
 df2.sort_values(by=['type_id'], inplace=True)
-print(df2.head(20))
+# print(df2.head(20))
 
 # groups type id's into each type and gets min/max price
 typeid_grp = df2.groupby('type_id')
@@ -74,17 +75,29 @@ type_group_marg['Margin'] = ((type_group_marg['price']['Sell Price'] - type_grou
 
 # filters DF to only above 40% margin
 type_group_marg = type_group_marg[type_group_marg['Margin'] >= 40]
+type_group_marg.reset_index(inplace=True)
 
-print(str(len(type_group_marg)) + ' items\n', type_group_marg.head(20))
+# make a list of type id's
+id_list = list(type_group_marg['type_id'])
+# names of items
+name_list = idConverter(id_list)
+name_list = sorted(name_list, key=itemgetter('id'))
+name_df = pd.DataFrame(name_list)
+name_df.drop(['category', 'id'], axis=1, inplace=True)
+
+# adds 'name' column to main DF.
+type_group_marg.insert(1, 'name', name_df)
+
+# print(str(len(type_group_marg)) + ' items\n', type_group_marg.head(20))
 type_group_marg.to_csv(r'market_working_files/hi_low_price.csv')
 
 type_group_marg.to_html(r'market_working_files/group_table.html',
                         float_format='%.2f',
                         justify='justify-all')
-'''
+
 final_df = svrCalc(type_group_marg)
 print(final_df)
-'''
+
 print(datetime.today() - start)
 
 print(datetime.today())

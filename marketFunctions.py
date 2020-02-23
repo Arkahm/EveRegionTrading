@@ -67,25 +67,26 @@ def getLowest(systems):
 def svrCalc(data):
     # create DF for holding final items
     df1 = pd.DataFrame()
-    for type_id in data['type_id']:
+    data.set_index(['type_id'], inplace=True)
+    for type_id, name in data.iterrows():
         # try excludes any sold_items/0 issues
         try:
-            sold_items = productTotalSold(int(type_id))
-            added_items = productTotalAdded(int(type_id))
+            sold_items = productTotalSold(type_id)
+            added_items = productTotalAdded(type_id)
             SVR = (sold_items/added_items)*100
+            print(SVR)
         except Exception:
             continue
 
         # Output SVR value
-        margin = ((float(data['Sell Price']) -
-                  float(data['Buy Price']))/float(data['Buy Price']))*100
+        # margin = ((float(data['Sell Price']) -
+        #           float(data['Buy Price']))/float(data['Buy Price']))*100
         if SVR >= 100 and added_items >= 14:
-            df2 = pd.DataFrame[int(type_id), data['type_id'], int(SVR)]
+            df2 = pd.DataFrame[type_id, name['name'], int(SVR)]
             df1.append(df2, ignore_index=True, inplace=True)
-            print(str(int(type_id)) + ': ' + data['type_id'] +
-                  ' Sales to Volume Ratio (%) =', int(SVR))
-            print('Margin = %.2f' % margin, '%')
-            print('Total Sold:', sold_items, 'Total Posted:', added_items)
+            # print(str(int(type_id)) + ': ' + data['name'] + ' Sales to Volume Ratio (%) =', int(SVR))
+            # print('Margin = %.2f' % margin, '%')
+            # print('Total Sold:', sold_items, 'Total Posted:', added_items)
     print(df1)
     return df1
 
@@ -96,8 +97,7 @@ def svrCalc(data):
 
 def productTotalSold(number):
     time_diff = date.today() - timedelta(days=14)
-    url = 'https://esi.evetech.net/latest/markets/' + Domain \
-        + '/history/?datasource=tranquility&type_id=' + str(number)
+    url = 'https://esi.evetech.net/latest/markets/' + str(Domain) + '/history/?datasource=tranquility&type_id=' + str(number)
     region = requests.get(url)
     all_region_Markets = region.json()
     # print(all_region_Markets)
@@ -105,20 +105,20 @@ def productTotalSold(number):
     sales = []
     # find items sold per day
     for products_sold in all_region_Markets:
-        # print(products_sold['date'], number,' sales per day:', products_sold['volume'])
+        # print(products_sold['date'], number, ' sales per day:', products_sold['volume'])
         # print(products_sold.keys())
         if products_sold['date'] > str(time_diff):
+            # print(products_sold)
             sales.append(products_sold['volume'])
 
     weekly_sales = sum(sales)
-    # print('Item Id: ' + str(number) ,'Weekly sales: ',weekly_sales)
+    # print('Item Id: ' + str(number), 'Weekly sales: ', weekly_sales)
     return weekly_sales
 
 
 def productTotalAdded(number):
     time_diff = date.today() - timedelta(days=14)
-    url2 = 'https://esi.evetech.net/latest/markets/' + Domain + \
-        '/orders/?datasource=tranquility&order_type=sell&page=1&type_id=' + str(number)
+    url2 = 'https://esi.evetech.net/latest/markets/' + str(Domain) + '/orders/?datasource=tranquility&order_type=sell&page=1&type_id=' + str(number)
     daily_items = requests.get(url2)
     all_products = daily_items.json()
     # print(all_products)
@@ -134,3 +134,11 @@ def productTotalAdded(number):
     weekly_vol = sum(volumes)
     # print('Items added: ', weekly_vol)
     return weekly_vol
+
+
+def idConverter(id):
+    # for item in id:
+    url = 'https://esi.evetech.net/latest/universe/names/?datasource=tranquility'
+    r = requests.post(url, json=id)
+    names = r.json()
+    return names
