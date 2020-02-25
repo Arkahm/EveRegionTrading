@@ -1,7 +1,8 @@
 import requests
 import operator
 import pandas as pd
-from datetime import timedelta, date, datetime
+import numpy as np
+from datetime import timedelta, date
 
 #   reference
 Domain = 10000043
@@ -67,14 +68,15 @@ def getLowest(systems):
 def svrCalc(data):
     # create DF for holding final items
     df1 = pd.DataFrame()
-    data.set_index(['type_id'], inplace=True)
-    for type_id, name in data.iterrows():
+    data.set_index('type_id', inplace=True)
+    data.drop(['location_id', 'price'], axis=1, inplace=True)
+    # print(data)
+    for type_id, item_name in data.iterrows():
         # try excludes any sold_items/0 issues
         try:
             sold_items = productTotalSold(type_id)
             added_items = productTotalAdded(type_id)
             SVR = (sold_items/added_items)*100
-            print(SVR)
         except Exception:
             continue
 
@@ -82,17 +84,19 @@ def svrCalc(data):
         # margin = ((float(data['Sell Price']) -
         #           float(data['Buy Price']))/float(data['Buy Price']))*100
         if SVR >= 100 and added_items >= 14:
-            df2 = pd.DataFrame[type_id, name['name'], int(SVR)]
-            df1.append(df2, ignore_index=True, inplace=True)
-            # print(str(int(type_id)) + ': ' + data['name'] + ' Sales to Volume Ratio (%) =', int(SVR))
+            print('Gathering items...')
+            df2 = pd.DataFrame([[int(type_id), str(item_name['name'].sort_values), int(SVR),
+                               str(item_name['Margin'].sort_values)]], index=[0],
+                               columns=['Type ID', 'Name', 'SVR', 'Margin'])
+            df1 = df1.append(df2, ignore_index=True)
+            # print((str(type_id)) + ': ' + item['name'] + ' Sales to Volume Ratio (%) = ', str(SVR))
             # print('Margin = %.2f' % margin, '%')
             # print('Total Sold:', sold_items, 'Total Posted:', added_items)
-    print(df1)
+    print(df1.head(20))
+    # print(datetime.today())
+    # print('')
+    print('End Items\n')
     return df1
-
-    print(datetime.today())
-    print('')
-    print('End Items')
 
 
 def productTotalSold(number):
@@ -121,24 +125,31 @@ def productTotalAdded(number):
     url2 = 'https://esi.evetech.net/latest/markets/' + str(Domain) + '/orders/?datasource=tranquility&order_type=sell&page=1&type_id=' + str(number)
     daily_items = requests.get(url2)
     all_products = daily_items.json()
-    # print(all_products)
+    # print(all_products)  # for testing
     # number of items on market per day
     volumes = []
     # Find total items added to market in 7 days.
     for items_total in all_products:
-        # print(items_total.keys())
+        # print(items_total.keys())  # for testing
         if items_total['issued'] > str(time_diff):
             volumes.append(items_total['volume_total'])
-            # print('Items added per day:', items_total['volume_total'])
+            # print('Items added per day:', items_total['volume_total'])  # for testing
 
     weekly_vol = sum(volumes)
-    # print('Items added: ', weekly_vol)
+    # print('Items added: ', weekly_vol)  # for testing
     return weekly_vol
 
 
 def idConverter(id):
-    # for item in id:
-    url = 'https://esi.evetech.net/latest/universe/names/?datasource=tranquility'
-    r = requests.post(url, json=id)
-    names = r.json()
-    return names
+    split_list = np.array_split(id, 10)
+    # print(split_list)  # for testing
+    added_names = []
+    for arr in split_list:
+        arr = arr.tolist()
+        # print(type(arr))  # for testing
+        url = 'https://esi.evetech.net/latest/universe/names/?datasource=tranquility'
+        r = requests.post(url, json=arr)
+        # print(type(r))  # for testing
+        names = r.json()
+        added_names = added_names.append(names)
+    return added_names
