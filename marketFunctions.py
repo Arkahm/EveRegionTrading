@@ -71,6 +71,7 @@ def svrCalc(data):
     data.set_index('type_id', inplace=True)
     data.drop(['location_id', 'price'], axis=1, inplace=True)
     # print(data)
+    n = 1
     for type_id, item_name in data.iterrows():
         # try excludes any sold_items/0 issues
         try:
@@ -84,11 +85,12 @@ def svrCalc(data):
         # margin = ((float(data['Sell Price']) -
         #           float(data['Buy Price']))/float(data['Buy Price']))*100
         if SVR >= 100 and added_items >= 14:
-            print('Gathering items...')
-            df2 = pd.DataFrame([[int(type_id), str(item_name['name'].sort_values), int(SVR),
-                               str(item_name['Margin'].sort_values)]], index=[0],
+            print('Gathering items...(' + str(n) + ')', end='\r')
+            df2 = pd.DataFrame([[int(type_id), str(item_name['name']), int(SVR),
+                               str(item_name['Margin'])]], index=[0],
                                columns=['Type ID', 'Name', 'SVR', 'Margin'])
             df1 = df1.append(df2, ignore_index=True)
+            n += 1
             # print((str(type_id)) + ': ' + item['name'] + ' Sales to Volume Ratio (%) = ', str(SVR))
             # print('Margin = %.2f' % margin, '%')
             # print('Total Sold:', sold_items, 'Total Posted:', added_items)

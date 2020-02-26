@@ -1,6 +1,5 @@
 import requests
 import pandas as pd
-import numpy as np
 from datetime import datetime
 from operator import itemgetter
 from marketFunctions import getOrders, getLowest, idConverter, svrCalc
@@ -18,7 +17,9 @@ SinqLaison = 10000032
 Dodixie_location_id = 60011866
 
 # Begin script process
-pd.set_option('display.max_rows', 50)
+pd.set_option('display.max_rows', 300)
+pd.set_option('display.max_colwidth', 60)
+
 start = datetime.today()
 print(start)
 
@@ -42,7 +43,7 @@ for region in regions:
     url_station = 'https://esi.evetech.net/latest/markets/' + \
         str(region) + '/orders/?datasource=tranquility&order_type=sell'
     region_list = requests.get(url_station)
-    num_pages = 20  # region_list.headers['x-pages']
+    num_pages = 5  # region_list.headers['x-pages']
     orders = getOrders(region, locations[locations_count], int(num_pages))
     lowest = getLowest(orders)
     locations_count += 1
@@ -84,13 +85,13 @@ id_list = list(type_group_marg['type_id'])
 
 # names of items
 name_list = idConverter(id_list)
-# print(name_list)
 name_list = sorted(name_list, key=itemgetter('id'))
 name_df = pd.DataFrame(name_list)
 name_df.drop(['category', 'id'], axis=1, inplace=True)
 
 # adds 'name' column to main DF.
 type_group_marg.insert(1, 'name', name_df)
+print(len(type_group_marg))
 
 # print(str(len(type_group_marg)) + ' items\n', type_group_marg.head(20))
 type_group_marg.to_csv(r'market_working_files/hi_low_price.csv')
@@ -100,6 +101,7 @@ type_group_marg.to_html(r'market_working_files/group_table.html',
                         justify='justify-all')
 
 final_df = svrCalc(type_group_marg)
+print(len(final_df))
 print(final_df)
 
 print(datetime.today() - start)
