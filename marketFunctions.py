@@ -92,7 +92,7 @@ def svrCalc(data):
             # print((str(type_id)) + ': ' + item['name'] + ' Sales to Volume Ratio (%) = ', str(SVR))
             # print('Margin = %.2f' % margin, '%')
             # print('Total Sold:', sold_items, 'Total Posted:', added_items)
-    print(df1.head(20))
+    # print(df1.head(20))
     # print(datetime.today())
     # print('')
     print('End Items\n')
@@ -151,5 +151,5 @@ def idConverter(id):
         r = requests.post(url, json=arr)
         # print(type(r))  # for testing
         names = r.json()
-        added_names = added_names.append(names)
+        added_names.extend(names)
     return added_names

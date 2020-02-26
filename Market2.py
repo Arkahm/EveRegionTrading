@@ -80,11 +80,11 @@ type_group_marg.reset_index(inplace=True)
 
 # make a list of type id's
 id_list = list(type_group_marg['type_id'])
-print(len(id_list))
+# print(len(id_list))
 
 # names of items
 name_list = idConverter(id_list)
-print(name_list)
+# print(name_list)
 name_list = sorted(name_list, key=itemgetter('id'))
 name_df = pd.DataFrame(name_list)
 name_df.drop(['category', 'id'], axis=1, inplace=True)
@@ -100,7 +100,7 @@ type_group_marg.to_html(r'market_working_files/group_table.html',
                         justify='justify-all')
 
 final_df = svrCalc(type_group_marg)
-print(final_df, '\n')
+print(final_df)
 
 print(datetime.today() - start)
 
