@@ -54,6 +54,7 @@ for region in regions:
 
 df2 = pd.DataFrame(lowest_highest)
 
+# Replace location id number with actual location name
 replace_location = {
     60008494: 'Amarr',
     60005686: 'Hek',
@@ -61,13 +62,13 @@ replace_location = {
     60004588: 'Rens',
     60011866: 'Dodixie'
 }
-
 df2.replace(replace_location, inplace=True)
 df2.reset_index(drop=True, inplace=True)
+# print(df2.head(20))  # for testing
 df2.sort_values(by=['type_id'], inplace=True)
-# print(df2.head(20))
 
-# groups type id's into each type and gets min/max price
+# groups type id's and gets min/max price
+# and calculate margin
 typeid_grp = df2.groupby('type_id')
 
 type_group_marg = typeid_grp[['location_id', 'price']].agg(['min', 'max'])
@@ -79,9 +80,9 @@ type_group_marg['Margin'] = ((type_group_marg['price']['Sell Price'] - type_grou
 type_group_marg = type_group_marg[type_group_marg['Margin'] >= 40]
 type_group_marg.reset_index(inplace=True)
 
-# make a list of type id's
+# make a list of type id's to get item names
 id_list = list(type_group_marg['type_id'])
-# print(len(id_list))
+# print(len(id_list))  # for testing
 
 # names of items
 name_list = idConverter(id_list)
@@ -96,13 +97,12 @@ print(len(type_group_marg))
 # print(str(len(type_group_marg)) + ' items\n', type_group_marg.head(20))
 type_group_marg.to_csv(r'market_working_files/hi_low_price.csv')
 
-type_group_marg.to_html(r'market_working_files/group_table.html',
-                        float_format='%.2f',
-                        justify='justify-all')
-
 final_df = svrCalc(type_group_marg)
-print(len(final_df))
-print(final_df)
+print(len(final_df))  # For testing
+print(final_df)  # for testing
+final_df.to_html(r'market_working_files/group_table.html',
+                 float_format='%.2f',
+                 justify='justify-all')
 
 print(datetime.today() - start)
 

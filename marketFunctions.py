@@ -21,8 +21,10 @@ Dodixie_location_id = 60011866
 def getOrders(region, location, pages):
     page = 1
     time_diff = date.today() - timedelta(days=14)
+
     # list to store individual trade hub
     station_list = []*(pages*600)
+
     # list to store url response
     station_List = []
     while page <= pages:
@@ -59,7 +61,6 @@ def getLowest(systems):
             system_order = systems[i+1]
         if system['type_id'] != system_order['type_id']:
             singleItemsLow.append(system)
-        # print(i, end='\r')
         i += 1
 
     return singleItemsLow
@@ -68,9 +69,11 @@ def getLowest(systems):
 def svrCalc(data):
     # create DF for holding final items
     df1 = pd.DataFrame()
+    # print(data)  # for testing
     data.set_index('type_id', inplace=True)
-    data.drop(['location_id', 'price'], axis=1, inplace=True)
-    # print(data)
+    data.drop(('price', 'Buy Price'), axis=1, inplace=True)
+    data.drop(('location_id', 'Buy Price'), axis=1, inplace=True)
+    # print(data)  # for testing
     n = 1
     for type_id, item_name in data.iterrows():
         # try excludes any sold_items/0 issues
@@ -82,49 +85,40 @@ def svrCalc(data):
             continue
 
         # Output SVR value
-        # margin = ((float(data['Sell Price']) -
-        #           float(data['Buy Price']))/float(data['Buy Price']))*100
-        if SVR >= 100 and added_items >= 14:
+        if SVR >= 100 and added_items >= 14 and sold_items >= 14:
             print('Gathering items...(' + str(n) + ')', end='\r')
-            df2 = pd.DataFrame([[int(type_id), str(item_name['name']), int(SVR),
-                               str(item_name['Margin'])]], index=[0],
+            df2 = pd.DataFrame([[int(type_id), item_name['name'].values, int(SVR),
+                               item_name['Margin'].values]], index=[0],
                                columns=['Type ID', 'Name', 'SVR', 'Margin'])
-            df1 = df1.append(df2, ignore_index=True)
+            df1 = pd.concat([df1, df2], ignore_index=True)
             n += 1
-            # print((str(type_id)) + ': ' + item['name'] + ' Sales to Volume Ratio (%) = ', str(SVR))
-            # print('Margin = %.2f' % margin, '%')
-            # print('Total Sold:', sold_items, 'Total Posted:', added_items)
-    # print(df1.head(20))
-    # print(datetime.today())
-    # print('')
+        # print(df1)  # for testing
     print('End Items\n')
     return df1
 
 
 def productTotalSold(number):
     time_diff = date.today() - timedelta(days=14)
-    url = 'https://esi.evetech.net/latest/markets/' + str(Domain) + '/history/?datasource=tranquility&type_id=' + str(number)
+    url = 'https://esi.evetech.net/latest/markets/' + str(Domain) + \
+        '/history/?datasource=tranquility&type_id=' + str(number)
     region = requests.get(url)
     all_region_Markets = region.json()
-    # print(all_region_Markets)
-
     sales = []
+
     # find items sold per day
     for products_sold in all_region_Markets:
-        # print(products_sold['date'], number, ' sales per day:', products_sold['volume'])
-        # print(products_sold.keys())
         if products_sold['date'] > str(time_diff):
-            # print(products_sold)
             sales.append(products_sold['volume'])
 
     weekly_sales = sum(sales)
-    # print('Item Id: ' + str(number), 'Weekly sales: ', weekly_sales)
+    # print(weekly_sales)  # for testing
     return weekly_sales
 
 
 def productTotalAdded(number):
     time_diff = date.today() - timedelta(days=14)
-    url2 = 'https://esi.evetech.net/latest/markets/' + str(Domain) + '/orders/?datasource=tranquility&order_type=sell&page=1&type_id=' + str(number)
+    url2 = 'https://esi.evetech.net/latest/markets/' + str(Domain) + \
+        '/orders/?datasource=tranquility&order_type=sell&page=1&type_id=' + str(number)
     daily_items = requests.get(url2)
     all_products = daily_items.json()
     # print(all_products)  # for testing
@@ -135,10 +129,9 @@ def productTotalAdded(number):
         # print(items_total.keys())  # for testing
         if items_total['issued'] > str(time_diff):
             volumes.append(items_total['volume_total'])
-            # print('Items added per day:', items_total['volume_total'])  # for testing
 
     weekly_vol = sum(volumes)
-    # print('Items added: ', weekly_vol)  # for testing
+    # print(weekly_vol)  # for testing
     return weekly_vol
 
 
