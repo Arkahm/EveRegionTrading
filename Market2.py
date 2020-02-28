@@ -43,7 +43,7 @@ for region in regions:
     url_station = 'https://esi.evetech.net/latest/markets/' + \
         str(region) + '/orders/?datasource=tranquility&order_type=sell'
     region_list = requests.get(url_station)
-    num_pages = 5  # region_list.headers['x-pages']
+    num_pages = 1  # region_list.headers['x-pages']
     orders = getOrders(region, locations[locations_count], int(num_pages))
     lowest = getLowest(orders)
     locations_count += 1
@@ -64,7 +64,7 @@ replace_location = {
 }
 df2.replace(replace_location, inplace=True)
 df2.reset_index(drop=True, inplace=True)
-# print(df2.head(20))  # for testing
+#  print(df2.head(20))  # for testing
 df2.sort_values(by=['type_id'], inplace=True)
 
 # groups type id's and gets min/max price

@@ -87,8 +87,8 @@ def svrCalc(data):
         # Output SVR value
         if SVR >= 100 and added_items >= 14 and sold_items >= 14:
             print('Gathering items...(' + str(n) + ')', end='\r')
-            df2 = pd.DataFrame([[int(type_id), item_name['name'].values, int(SVR),
-                               item_name['Margin'].values]], index=[0],
+            df2 = pd.DataFrame([[int(type_id), str(item_name['name'].values), int(SVR),
+                               float(item_name['Margin'].values)]], index=[0],
                                columns=['Type ID', 'Name', 'SVR', 'Margin'])
             df1 = pd.concat([df1, df2], ignore_index=True)
             n += 1
@@ -103,6 +103,7 @@ def productTotalSold(number):
         '/history/?datasource=tranquility&type_id=' + str(number)
     region = requests.get(url)
     all_region_Markets = region.json()
+    # print(all_region_Markets)  # for testing
     sales = []
 
     # find items sold per day
@@ -124,7 +125,7 @@ def productTotalAdded(number):
     # print(all_products)  # for testing
     # number of items on market per day
     volumes = []
-    # Find total items added to market in 7 days.
+    # Find total items added to market in 14 days.
     for items_total in all_products:
         # print(items_total.keys())  # for testing
         if items_total['issued'] > str(time_diff):
@@ -147,4 +148,5 @@ def idConverter(id):
         # print(type(r))  # for testing
         names = r.json()
         added_names.extend(names)
+
     return added_names
