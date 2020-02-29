@@ -84,7 +84,7 @@ def svrCalc(data):
             continue
 
         # Output SVR value
-        if SVR >= 100 and added_items >= 14 and sold_items >= 14:
+        if SVR >= 1000:  # and added_items >= 14 and sold_items >= 14:
             print('Gathering items...(' + str(n) + ')', end='\r')
             df2 = pd.DataFrame([[int(type_id), item_name['name'].to_string(),
                                item_name[('location_id', 'Buy Price')],

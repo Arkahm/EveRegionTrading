@@ -24,16 +24,10 @@ start = datetime.today()
 print(start)
 
 # preliminary location, counter, and list requirements
-regions = [Forge,
-           Domain,
-           SinqLaison,
-           Metropolis,
-           Heimatar]
-locations = [Jita_location_id,
-             Amarr_location_id,
-             Dodixie_location_id,
-             Hek_location_id,
-             Rens_location_id]
+regions = [Domain,
+           SinqLaison]
+locations = [Amarr_location_id,
+             Dodixie_location_id]
 locations_count = 0
 lowest_highest = []
 
