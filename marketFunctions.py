@@ -71,8 +71,7 @@ def svrCalc(data):
     df1 = pd.DataFrame()
     # print(data)  # for testing
     data.set_index('type_id', inplace=True)
-    data.drop(('price', 'Buy Price'), axis=1, inplace=True)
-    data.drop(('location_id', 'Buy Price'), axis=1, inplace=True)
+
     # print(data)  # for testing
     n = 1
     for type_id, item_name in data.iterrows():
@@ -87,9 +86,14 @@ def svrCalc(data):
         # Output SVR value
         if SVR >= 100 and added_items >= 14 and sold_items >= 14:
             print('Gathering items...(' + str(n) + ')', end='\r')
-            df2 = pd.DataFrame([[int(type_id), str(item_name['name'].values), int(SVR),
-                               float(item_name['Margin'].values)]], index=[0],
-                               columns=['Type ID', 'Name', 'SVR', 'Margin'])
+            df2 = pd.DataFrame([[int(type_id), item_name['name'].to_string(),
+                               item_name[('location_id', 'Buy Price')],
+                               float(item_name[('price', 'Buy Price')]),
+                               item_name[('location_id', 'Sell Price')],
+                               float(item_name[('price', 'Sell Price')]),
+                               int(SVR), float(item_name['Margin'].values)]],
+                               index=[0], columns=['Type ID', 'Name', 'Buy Location', 'Buy Price',
+                                                   'Sell Location', 'Sell Price', 'SVR', 'Margin'])
             df1 = pd.concat([df1, df2], ignore_index=True)
             n += 1
         # print(df1)  # for testing
