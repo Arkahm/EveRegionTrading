@@ -25,8 +25,14 @@ print(start)
 
 # preliminary location, counter, and list requirements
 regions = [Domain,
+           Metropolis,
+           Forge,
+           Heimatar,
            SinqLaison]
 locations = [Amarr_location_id,
+             Hek_location_id,
+             Jita_location_id,
+             Rens_location_id,
              Dodixie_location_id]
 locations_count = 0
 lowest_highest = []

@@ -77,14 +77,27 @@ def svrCalc(data):
     for type_id, item_name in data.iterrows():
         # try excludes any sold_items/0 issues
         try:
-            sold_items = productTotalSold(type_id)
-            added_items = productTotalAdded(type_id)
+            if item_name[('location_id', 'Sell Price')] == 'Amarr':
+                sold_items = productTotalSold(type_id, str(Domain))
+                added_items = productTotalAdded(type_id, str(Domain))
+            elif item_name[('location_id', 'Sell Price')] == 'Dodixie':
+                sold_items = productTotalSold(type_id, str(SinqLaison))
+                added_items = productTotalAdded(type_id, str(SinqLaison))
+            elif item_name[('location_id', 'Sell Price')] == 'Hek':
+                sold_items = productTotalSold(type_id, str(Metropolis))
+                added_items = productTotalAdded(type_id, str(SinqLaison))
+            elif item_name[('location_id', 'Sell Price')] == 'Jita':
+                sold_items = productTotalSold(type_id, str(Forge))
+                added_items = productTotalAdded(type_id, str(Forge))
+            elif item_name[('location_id', 'Sell Price')] == 'Rens':
+                sold_items = productTotalSold(type_id, str(Heimatar))
+                added_items = productTotalAdded(type_id, str(Heimatar))
             SVR = (sold_items/added_items)*100
         except Exception:
             continue
 
         # Output SVR value
-        if SVR >= 1000:  # and added_items >= 14 and sold_items >= 14:
+        if SVR >= 150 and added_items >= 14 and sold_items >= 14:
             print('Gathering items...(' + str(n) + ')', end='\r')
             df2 = pd.DataFrame([[int(type_id), item_name['name'].to_string(),
                                item_name[('location_id', 'Buy Price')],
@@ -101,9 +114,9 @@ def svrCalc(data):
     return df1
 
 
-def productTotalSold(number):
+def productTotalSold(number, station):
     time_diff = date.today() - timedelta(days=14)
-    url = 'https://esi.evetech.net/latest/markets/' + str(Domain) + \
+    url = 'https://esi.evetech.net/latest/markets/' + station + \
         '/history/?datasource=tranquility&type_id=' + str(number)
     region = requests.get(url)
     all_region_Markets = region.json()
@@ -120,9 +133,9 @@ def productTotalSold(number):
     return weekly_sales
 
 
-def productTotalAdded(number):
+def productTotalAdded(number, station):
     time_diff = date.today() - timedelta(days=14)
-    url2 = 'https://esi.evetech.net/latest/markets/' + str(Domain) + \
+    url2 = 'https://esi.evetech.net/latest/markets/' + station + \
         '/orders/?datasource=tranquility&order_type=sell&page=1&type_id=' + str(number)
     daily_items = requests.get(url2)
     all_products = daily_items.json()
