@@ -173,3 +173,23 @@ def idConverter(id):
         added_names.extend(names)
 
     return added_names
+
+
+def getGroups():
+    inv_type = pd.read_csv(r'market_working_files/invTypes.csv', index_col=False,
+                           usecols=['typeID',
+                                    'groupID',
+                                    'typeName',
+                                    'volume',
+                                    'marketGroupID'])
+    drop_list = [104, 105, 106, 107, 108, 110, 111, 118, 119, 120, 121, 123, 126,
+                 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 139, 140,
+                 141, 142, 143, 145, 147, 148, 151, 152, 154, 156, 157, 158, 160,
+                 161, 162, 163, 165, 166, 167, 168, 169, 170, 172, 174, 176, 177,
+                 178, 218, 223, 224, 280, 281, 282, 283, 284, 296, 342, 343, 344,
+                 345, 346, 347, 348, 349, 350, 352, 356, 360, 1083, 1084, 1088,
+                 1089, 1090, 1091, 1092]
+    print(type(inv_type['groupID'].values))
+    inv_type = inv_type[inv_type['groupID'].str.contains('|'.join(drop_list))]
+    print(inv_type)
+    return inv_type

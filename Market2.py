@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 from datetime import datetime
 from operator import itemgetter
-from marketFunctions import getOrders, getLowest, idConverter, svrCalc
+from marketFunctions import getOrders, getLowest, idConverter, svrCalc  # , getGroups
 
 #  reference
 Domain = 10000043
@@ -43,7 +43,7 @@ for region in regions:
     url_station = 'https://esi.evetech.net/latest/markets/' + \
         str(region) + '/orders/?datasource=tranquility&order_type=sell'
     region_list = requests.get(url_station)
-    num_pages = region_list.headers['x-pages']
+    num_pages = 5  # region_list.headers['x-pages']
     orders = getOrders(region, locations[locations_count], int(num_pages))
     lowest = getLowest(orders)
     locations_count += 1
@@ -90,19 +90,24 @@ name_list = sorted(name_list, key=itemgetter('id'))
 name_df = pd.DataFrame(name_list)
 name_df.drop(['category', 'id'], axis=1, inplace=True)
 
-# adds 'name' column to main DF.
+# adds filtered 'name' column to main DF.
 type_group_marg.insert(1, 'name', name_df)
-drop_items = ["Men's", "Women's", 'crate', 'SKIN', 'Festival']
+drop_items = ["Men's", "Women's", 'crate', 'SKIN', 'Festival', 'Blueprint', 'civilian']
 type_group_marg = type_group_marg[~type_group_marg['name'].str.contains('|'.join(drop_items))]
+# drop_ids = getGroups()
+# type_group_marg = type_group_marg[~type_group_marg['type_id'].str.contains('|'.join(drop_ids))]
+type_group_marg.sort_values(by='type_id', inplace=True)
 print(type_group_marg)  # for testing
 print(len(type_group_marg))
 
 # print(str(len(type_group_marg)) + ' items\n', type_group_marg.head(20))
 type_group_marg.to_csv(r'market_working_files/hi_low_price.csv')
 
+# producing final output
 final_df = svrCalc(type_group_marg)
 print(len(final_df))  # For testing
 print(final_df)  # for testing
+final_df.sort_values(by='Name', inplace=True)
 final_df.to_html(r'market_working_files/group_table.html',
                  float_format='%.2f',
                  justify='justify-all')
