@@ -92,6 +92,9 @@ name_df.drop(['category', 'id'], axis=1, inplace=True)
 
 # adds 'name' column to main DF.
 type_group_marg.insert(1, 'name', name_df)
+drop_items = ["Men's", "Women's", 'crate', 'SKIN', 'Festival']
+type_group_marg = type_group_marg[~type_group_marg['name'].str.contains('|'.join(drop_items))]
+print(type_group_marg)  # for testing
 print(len(type_group_marg))
 
 # print(str(len(type_group_marg)) + ' items\n', type_group_marg.head(20))

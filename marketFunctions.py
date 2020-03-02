@@ -105,8 +105,14 @@ def svrCalc(data):
                                item_name[('location_id', 'Sell Price')],
                                float(item_name[('price', 'Sell Price')]),
                                int(SVR), float(item_name['Margin'].values)]],
-                               index=[0], columns=['Type ID', 'Name', 'Buy Location', 'Buy Price',
-                                                   'Sell Location', 'Sell Price', 'SVR', 'Margin'])
+                               index=[0], columns=['Type ID',
+                                                   'Name',
+                                                   'Buy Location',
+                                                   'Buy Price',
+                                                   'Sell Location',
+                                                   'Sell Price',
+                                                   'SVR',
+                                                   'Margin'])
             df1 = pd.concat([df1, df2], ignore_index=True)
             n += 1
         # print(df1)  # for testing
