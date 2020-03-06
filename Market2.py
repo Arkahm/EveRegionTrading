@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 from datetime import datetime
 from operator import itemgetter
-from marketFunctions import getOrders, getLowest, idConverter, svrCalc  # , getGroups
+from marketFunctions import getOrders, getLowest, idConverter, svrCalc, deleteGroups
 
 #  reference
 Domain = 10000043
@@ -40,10 +40,10 @@ lowest_highest = []
 # sets the number of ESI pages to loop through in order to
 # pull ALL items and will assign where to search
 for region in regions:
-    url_station = 'https://esi.evetech.net/latest/markets/' + \
+    url_station = 'https://esi.evetech.net/dev/markets/' + \
         str(region) + '/orders/?datasource=tranquility&order_type=sell'
     region_list = requests.get(url_station)
-    num_pages = 5  # region_list.headers['x-pages']
+    num_pages = region_list.headers['x-pages']
     orders = getOrders(region, locations[locations_count], int(num_pages))
     lowest = getLowest(orders)
     locations_count += 1
@@ -77,12 +77,12 @@ type_group_marg['Margin'] = ((type_group_marg['price']['Sell Price'] - type_grou
                              ['Buy Price'])/type_group_marg['price']['Sell Price'])*100
 
 # filters DF to only above 40% margin
-type_group_marg = type_group_marg[type_group_marg['Margin'] >= 40]
+type_group_marg = type_group_marg[type_group_marg['Margin'] >= 60]
 type_group_marg.reset_index(inplace=True)
 
 # make a list of type id's to get item names
 id_list = list(type_group_marg['type_id'])
-# print(len(id_list))  # for testing
+print(len(id_list))  # for testing
 
 # names of items
 name_list = idConverter(id_list)
@@ -92,12 +92,15 @@ name_df.drop(['category', 'id'], axis=1, inplace=True)
 
 # adds filtered 'name' column to main DF.
 type_group_marg.insert(1, 'name', name_df)
-drop_items = ["Men's", "Women's", 'crate', 'SKIN', 'Festival', 'Blueprint', 'civilian']
-type_group_marg = type_group_marg[~type_group_marg['name'].str.contains('|'.join(drop_items))]
-# drop_ids = getGroups()
+# drop_items = ["Men's", "Women's", 'crate', 'SKIN', 'Festival', 'Blueprint', 'Tag', 'Civilian',
+#               'Insignia']
+# type_group_marg = type_group_marg[~type_group_marg['name'].str.contains('|'.join(drop_items))]
+del_groups = deleteGroups()
+type_group_marg = type_group_marg[~type_group_marg['type_id'].isin(del_groups)]
+# print(drop_ids)
 # type_group_marg = type_group_marg[~type_group_marg['type_id'].str.contains('|'.join(drop_ids))]
 type_group_marg.sort_values(by='type_id', inplace=True)
-print(type_group_marg)  # for testing
+# print(type_group_marg)  # for testing
 print(len(type_group_marg))
 
 # print(str(len(type_group_marg)) + ' items\n', type_group_marg.head(20))

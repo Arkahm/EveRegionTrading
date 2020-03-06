@@ -29,7 +29,7 @@ def getOrders(region, location, pages):
     station_List = []
     while page <= pages:
         try:
-            url_station = 'https://esi.evetech.net/latest/markets/' + \
+            url_station = 'https://esi.evetech.net/dev/markets/' + \
                 str(region) + '/orders/?datasource=tranquility&order_type=sell&page=' + str(page)
             station_List = requests.get(url_station)
 
@@ -141,7 +141,7 @@ def productTotalSold(number, station):
 
 def productTotalAdded(number, station):
     time_diff = date.today() - timedelta(days=14)
-    url2 = 'https://esi.evetech.net/latest/markets/' + station + \
+    url2 = 'https://esi.evetech.net/dev/markets/' + station + \
         '/orders/?datasource=tranquility&order_type=sell&page=1&type_id=' + str(number)
     daily_items = requests.get(url2)
     all_products = daily_items.json()
@@ -166,7 +166,7 @@ def idConverter(id):
     for arr in split_list:
         arr = arr.tolist()
         # print(type(arr))  # for testing
-        url = 'https://esi.evetech.net/latest/universe/names/?datasource=tranquility'
+        url = 'https://esi.evetech.net/dev/universe/names/?datasource=tranquility'
         r = requests.post(url, json=arr)
         # print(type(r))  # for testing
         names = r.json()
@@ -175,21 +175,25 @@ def idConverter(id):
     return added_names
 
 
-def getGroups():
-    inv_type = pd.read_csv(r'market_working_files/invTypes.csv', index_col=False,
-                           usecols=['typeID',
-                                    'groupID',
-                                    'typeName',
-                                    'volume',
-                                    'marketGroupID'])
-    drop_list = [104, 105, 106, 107, 108, 110, 111, 118, 119, 120, 121, 123, 126,
-                 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 139, 140,
-                 141, 142, 143, 145, 147, 148, 151, 152, 154, 156, 157, 158, 160,
-                 161, 162, 163, 165, 166, 167, 168, 169, 170, 172, 174, 176, 177,
-                 178, 218, 223, 224, 280, 281, 282, 283, 284, 296, 342, 343, 344,
-                 345, 346, 347, 348, 349, 350, 352, 356, 360, 1083, 1084, 1088,
-                 1089, 1090, 1091, 1092]
-    print(type(inv_type['groupID'].values))
-    inv_type = inv_type[inv_type['groupID'].str.contains('|'.join(drop_list))]
-    print(inv_type)
-    return inv_type
+def deleteGroups():
+    groups = [280, 281, 282, 284, 342, 343, 344, 345, 346, 347, 348, 349, 350, 352,
+              355, 356, 360, 370, 371, 400, 401, 408, 409, 447, 477, 486, 487, 489,
+              490, 493, 500, 503, 516, 525, 651, 723, 727, 787, 841, 853, 854, 855,
+              856, 857, 858, 860, 870, 871, 879, 912, 914, 915, 917, 918, 944, 945,
+              965, 976, 1013, 1045, 1048, 1083, 1084, 1088, 1089, 1090, 1091, 1092,
+              1137, 1139, 1142, 1143, 1144, 1145, 1146, 1147, 1151, 1152, 1160, 1162,
+              1190, 1194, 1195, 1197, 1206, 1222, 1224, 1225, 1239, 1248, 1271, 1293,
+              1294, 1317, 1318, 1397, 1399, 1461, 1462, 1543, 1670, 1679, 1703, 1707,
+              1708, 1709, 1718, 1723, 1810, 1812, 1888, 1889, 1890, 1950, 1953]
+
+    del_group_list = []
+    for group in groups:
+        group_url = 'https://esi.evetech.net/dev/universe/groups/' + str(group) + \
+                    '/?datasource=tranquility&language=en-us'
+        group_r = requests.get(group_url)
+        group_json = group_r.json()
+        # print(group_json)
+        del_group = group_json['types']
+        del_group_list.extend(del_group)
+    # print(del_group_list)
+    return del_group_list
